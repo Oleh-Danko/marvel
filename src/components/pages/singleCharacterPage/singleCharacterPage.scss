@@ -1,0 +1,23 @@
+.single-character {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 50px;
+    padding-top: 50px;
+    img {
+        width: 293px;
+        height: 293px;
+        object-fit: contain;
+    }
+    &__title {
+        font-weight: 700;
+        font-size: 22px;
+    }
+    &__descr {
+        margin-top: 25px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 21px;
+        height: 550px;
+    }
+}

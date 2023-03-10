@@ -8,7 +8,9 @@ import { SliderWithFirstFetch, SliderWithSecondFetch, HelloWithLogger } from "..
 const Page404 = lazy(() => import('../pages/404'))
 const MainPage = lazy(() => import('../pages/MainPage'))
 const ComicsPages = lazy(() => import('../pages/ComicsPages'))
-const SingleComicPage = lazy(() => import('../pages/SingleComicPage'))
+const SingleComicPage = lazy(() => import('../pages/singleComicPage/SingleComicPage'))
+const SingleCharacterPage = lazy(() => import('../pages/singleCharacterPage/SingleCharacterPage'))
+const SinglePage = lazy(() => import('../pages/SinglePage'))
 
 const App = () => {
     const onScroll = () => {
@@ -36,7 +38,8 @@ const App = () => {
                         <Routes>
                             <Route path='/' element={<MainPage/>} />
                             <Route path='/comics' element={<ComicsPages/>} />
-                            <Route path="/comics/:comicId" element={<SingleComicPage/>} />
+                            <Route path="/comics/:id" element={<SinglePage Component={SingleComicPage} dataType='comic'/>}/>
+                            <Route path="/characters/:id" element={<SinglePage Component={SingleCharacterPage} dataType='character'/>}/>
                             <Route path="*" element={<Page404/>}/>
                         </Routes>
                    </Suspense>

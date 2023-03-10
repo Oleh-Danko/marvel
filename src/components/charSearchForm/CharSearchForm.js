@@ -1,33 +1,34 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage as FormikErrorMessage } from 'formik';
 import * as Yup from 'yup'
+
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService'
 import './charSearchForm.scss'
 
 const AppForm = () => {
     const [char, setChar] = useState(null)
-    const {getCharacterByName} = useMarvelService()
+    const {getCharacterByName, error, clearError, loading} = useMarvelService()
 
     const updateChar = (name) => { 
-        getCharacterByName(name).then(res => {
-            console.log(res)
-        })
-        // getCharacterByName(name.name).then(({res}) => setChar(res))
+        clearError()
+        getCharacterByName(name).then(setChar)
     }
 
-    // const results = !char ? null : char.length > 0 ? 
-    //                 <div className="searchOk">
-    //                     <div className="searchOk__descr">There is! Visit name page?</div>
-    //                     <Link>
-    //                         <button className="button button__secondary">
-    //                             <div className="inner">to page</div>
-    //                         </button>
-    //                     </Link>
-    //                 </div> :
-    //                 <div className="searchError">
-    //                     The character was not found. Check the name and try again    
-    //                 </div> 
+    const errorMessage = error ? <div>{ErrorMessage}</div> : null
+    const results = !char ? null : char.length > 0 ? 
+                    <div className="searchOk">
+                        <div className="searchOk__descr">There is! Visit name page?</div>
+                        <Link to={`/characters/${char[0].id}`}>
+                            <button className="button button__secondary">
+                                <div className="inner">to page</div>
+                            </button>
+                        </Link>
+                    </div> :
+                    <div className="searchError">
+                        The character was not found. Check the name and try again    
+                    </div> 
 
     return (
         <Formik
@@ -49,12 +50,14 @@ const AppForm = () => {
                         placeholder='Enter name'/>
                     <button 
                         className="button button__main" 
-                        type="submit">
+                        type="submit"
+                        disabled={loading}>
                         <div className="inner">FIND</div>
                     </button>
                 </div>
-                <ErrorMessage className="error" name="charName" component="div"/>
-                {/* {results} */}
+                <FormikErrorMessage className="error" name="charName" component="div"/>
+                {results}
+                {errorMessage}
             </Form>
         </Formik>
     )
