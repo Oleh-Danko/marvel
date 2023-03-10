@@ -10,10 +10,10 @@ const AppForm = () => {
     const {getCharacterByName} = useMarvelService()
 
     const updateChar = (name) => { 
-        getCharacterByName(name.name).then(res => {
+        getCharacterByName(name).then(res => {
             console.log(res)
         })
-        getCharacterByName(name.name).then(({res}) => setChar(res))
+        // getCharacterByName(name.name).then(({res}) => setChar(res))
     }
 
     // const results = !char ? null : char.length > 0 ? 
