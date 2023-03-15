@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import useMarvelService from '../../services/MarvelService'
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
+import { setContentList } from '../../utils/setContent';
 
 import './charList.scss';
 
@@ -15,13 +14,10 @@ const CharList = (props) => {
     const [charEnded, setCharEnded] = useState(false)
     const [total, setTotal] = useState(1562)
 
-    const {getTotalCharacters, getAllCharacters, loading, error} = useMarvelService()
-
-    const [showItem, setShowItem] = useState(true)
+    const {getAllCharacters, loading, error, process, setProcess} = useMarvelService()
 
     useEffect(() => {
         onRequest(offset, true)
-        // getTotalCharacter()
 
         // window.addEventListener('scroll', () => {
         //     let scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
@@ -31,15 +27,11 @@ const CharList = (props) => {
         // });
     }, [])
 
-    // const getTotalCharacter = () => {
-    //     marvelService.getTotalCharacters()
-    //         .then(total => setTotal(total))
-    // }
-
     const onRequest = (offset, initial) => {
         initial ? setNewItemsLoading(false) : setNewItemsLoading(true)  
         getAllCharacters(offset)
             .then(onCharlistloaded)
+            .then(() => setProcess('confirmed'))
     }
     
     const onCharlistloaded = (newCharlist) => {
@@ -69,7 +61,6 @@ const CharList = (props) => {
                     <li 
                         className="char__item"
                         tabIndex={0}
-                        // key={item.id}
                         ref={el => itemsRef.current[i] = el}
                         onKeyPress={(e) => {
                             if (e.key === ' ' || e.key === 'Enter') {
@@ -94,15 +85,13 @@ const CharList = (props) => {
         )
     }
 
-    const content = renderItems(charlist)
-    const spinner = loading && !newItemsLoading ? <Spinner/> : null
-    const errorMessage = error ? <ErrorMessage/> : null 
+    const elements = useMemo(() => {
+        return setContentList(process, () =>renderItems(charlist), newItemsLoading)
+    }, [process])
 
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {content}
+            {elements}
                 
             <button className="button button__main button__long"
                 disabled={newItemsLoading}

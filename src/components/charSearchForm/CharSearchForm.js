@@ -5,18 +5,19 @@ import * as Yup from 'yup'
 
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService'
+
 import './charSearchForm.scss'
 
 const AppForm = () => {
     const [char, setChar] = useState(null)
-    const {getCharacterByName, error, clearError, loading} = useMarvelService()
+    const {getCharacterByName, clearError, process, setProcess} = useMarvelService()
 
     const updateChar = (name) => { 
         clearError()
-        getCharacterByName(name).then(setChar)
+        getCharacterByName(name).then(setChar).then(() => setProcess('confirmed'))
     }
 
-    const errorMessage = error ? <div>{ErrorMessage}</div> : null
+    const errorMessage =  process === 'error' ? <div>{ErrorMessage}</div> : null
     const results = !char ? null : char.length > 0 ? 
                     <div className="searchOk">
                         <div className="searchOk__descr">There is! Visit name page?</div>
@@ -51,7 +52,7 @@ const AppForm = () => {
                     <button 
                         className="button button__main" 
                         type="submit"
-                        disabled={loading}>
+                        disabled={process === 'loading' ? true : false}>
                         <div className="inner">FIND</div>
                     </button>
                 </div>

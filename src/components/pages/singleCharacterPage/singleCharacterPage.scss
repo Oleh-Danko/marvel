@@ -6,18 +6,23 @@
     img {
         width: 293px;
         height: 293px;
-        object-fit: contain;
+        object-fit: cover;
     }
     &__title {
         font-weight: 700;
         font-size: 22px;
     }
-    &__descr {
-        margin-top: 25px;
+    &__info {
         font-style: normal;
         font-weight: 400;
         font-size: 18px;
         line-height: 21px;
-        height: 550px;
+        width: 550px;
+    }
+    &__descr {
+        margin-top: 25px;
+    }
+    .single-comic__back {
+        // width: 20px;
     }
 }

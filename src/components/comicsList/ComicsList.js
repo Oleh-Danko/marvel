@@ -2,19 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
+import { setContentList } from '../../utils/setContent';
 
 import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
+
 
 const ComicsList = () => {
     const [comicsList, setComicsList] = useState([])
     const [newItemsLoading, setNewItemsLoading] = useState(false)
     const [offset, setOffset] = useState(8)
 
-    const {getAllComics, loading, error} = useMarvelService()
+    const {getAllComics, process, setProcess} = useMarvelService()
 
     useEffect(() => {
         onRequest(offset, true)
@@ -24,6 +22,7 @@ const ComicsList = () => {
         initial ? setNewItemsLoading(false) : setNewItemsLoading(true)  
         getAllComics(offset)
             .then(onComicslistloaded)
+            .then(() => setProcess('confirmed'))
     }
 
     const onComicslistloaded = (newComicslist) => {
@@ -40,8 +39,8 @@ const ComicsList = () => {
                 <li className="comics__item" key={i}>
                 <Link to={`/comics/${item.id}`}>
                     <img src={item.thumbnail} alt={item.description} className="comics__item-img"/>
-                    <div className="comics__item-name">{item.description}</div>
-                    <div className="comics__item-price">{item.price}$</div>
+                    <div className="comics__item-name">{item.title}</div>
+                    <div className="comics__item-price">{item.price === "not available" ? item.price : `${item.price}$`}</div>
                 </Link>
             </li>
             )
@@ -54,15 +53,9 @@ const ComicsList = () => {
         )
     }
 
-    const content = renderItems(comicsList)
-    const spinner = loading && !newItemsLoading ? <Spinner/> : null
-    const errorMessage = error ? <ErrorMessage/> : null
-
     return (
         <div className="comics__list">
-            {spinner}
-            {errorMessage}
-            {content}
+            {setContentList(process, () =>renderItems(comicsList), newItemsLoading)}
             <button 
                 disabled={newItemsLoading}
                 className="button button__main button__long"
